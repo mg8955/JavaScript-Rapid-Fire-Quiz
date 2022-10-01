@@ -1,0 +1,38 @@
+body {
+    /* width: 1000px;
+    height: 1000px; */
+    align-items:center;
+}
+
+h1 {
+    text-align: center;
+}
+
+ol {
+    /* display:list-item; */
+    text-align: center;
+    list-style-type: upper-alpha;
+    list-style-position: inside;
+    display: inline;
+}
+
+li {
+
+}
+
+button:hover {
+    color: white;
+    background-color: blue;
+}
+
+.question {
+    text-align: center;
+}
+
+#start-button {
+
+}
+
+#choice {
+
+}
