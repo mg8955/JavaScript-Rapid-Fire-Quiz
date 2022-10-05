@@ -7,13 +7,7 @@
 // when game ends, user can save initials (3) and their score
 // save this object in local storage
 //
-// array of object questions
-// var questionPool = [q1, q2, q3, ...];
-// var multChoice = ["question", "right answer", "wrong answer", 
-//                   "wrong answer", "wrong answer"]
-// var trueFalse = ["question", "true", "false"]
-// Math.random(index starting at 1)
-
+var secondsLeft = 75;
 
 var questionPool = [
     q1 = {
@@ -34,16 +28,12 @@ var questionPool = [
         choices: ["it do", "the squirts", "a cat", "the dog"],
     }];
 
-// console.log(questionPool[0].question);
-
-// this var will go into localstorage
-// remember to JSON.stringify this object and parse on retrieval
 var scoreBoard = {
     initials: "",
     score: "",
 };
 
-// console.log(questionPool[0].answer);
+localStorage.setItem("scoreBoard", JSON.stringify(scoreBoard));
 
 var body = document.body;
 var startButtonDiv = document.createElement("div");
@@ -52,14 +42,17 @@ var timeEl = document.createElement("div");
 var liQuestion = document.createElement("div");
 var listEl = document.createElement("ol");
 var choiceZeroDiv = document.createElement("div");
-var liChoice0 = document.createElement("li");
+var liChoice0 = document.createElement("button");
 var choiceOneDiv = document.createElement("div");
-var liChoice1 = document.createElement("li");
+var liChoice1 = document.createElement("button");
 var choiceTwoDiv = document.createElement("div");
-var liChoice2 = document.createElement("li");
+var liChoice2 = document.createElement("button");
 var choiceThreeDiv = document.createElement("div");
-var liChoice3 = document.createElement("li");
+var liChoice3 = document.createElement("button");
 var answerResult = document.createElement("div");
+var scoreBoardDisplay = document.createElement("div");
+var displayInitials = document.createElement("div");
+var displayScore = document.createElement("div");
 
 body.appendChild(startButtonDiv);
 startButtonDiv.appendChild(startButton);
@@ -70,53 +63,52 @@ startButton.textContent = "Start Quiz!"
 startButtonDiv.setAttribute("style", "width: 100%; margin:auto; text-align:center;");
 startButton.setAttribute("style", "color:blue; background-color:white; border: 2px solid blue; border-radius:25px; min-height:30px; min-width:90px;");
 timeEl.setAttribute("style", "text-align:center; margin:15px;");
-liQuestion.setAttribute("style", "text-align:center; max-width:100%;");
-liChoice0.setAttribute("style", "background-color:black; color:white;");
-liChoice2.setAttribute("style", "background-color:black; color:white;");
-// answerResult.setAttribute("style", "color:white;text-align:center; margin-top:20px;");
-// listEl.setAttribute("style", "background-color:#333333; padding:20px;");
-
-// liTags = document.querySelectorAll("li");
-// console.log(liTags);
-// for (i = 0; i < liTags.length; i++) {
-//     liTags[i].setAttribute("style", "color:white; background-color:blue;");
-// }
-
-// var startTimerEl = document.querySelector("#start-button");
-// var mailEL = document.getElementById("timer-text");
+liQuestion.setAttribute("style", "align-items:center; text-align:center; max-width:100%; margin:0;");
+liChoice0.setAttribute("style", "background-color:black; color:white; border-radius:3px; margin: 1px 0 1px 0;");
+liChoice0.setAttribute("class", "answer-button");
+liChoice0.setAttribute("id", "btn");
+liChoice1.setAttribute("style", "background-color:black; color:white; border-radius:3px; margin: 1px 0 1px 0;");
+liChoice1.setAttribute("class", "answer-button");
+liChoice1.setAttribute("id", "btn");
+liChoice2.setAttribute("style", "background-color:black; color:white; border-radius:3px; margin: 1px 0 1px 0;");
+liChoice2.setAttribute("class", "answer-button");
+liChoice2.setAttribute("id", "btn");
+liChoice3.setAttribute("style", "background-color:black; color:white; border-radius:3px; margin: 1px 0 1px 0;");
+liChoice3.setAttribute("class", "answer-button");
+liChoice3.setAttribute("id", "btn");
 
 startButton.addEventListener("click", function startQuiz() {
     startButtonDiv.setAttribute("style", "display:none;");
     setTime();
-
     displayQuestion();
-    
-    
-    
 });
 
-function setTime() { 
-    var secondsLeft = 75;
+function setTime() {
     var timerInterval = setInterval(function () {
         secondsLeft--;
         timeEl.textContent = secondsLeft + " seconds remaining!";
-
         startButtonDiv.setAttribute("style", "display:none;");
 
 
 
 
-        if (secondsLeft === 0) {
+        if (secondsLeft <= 0) {
             clearInterval(timerInterval);
             timeEl.textContent = "Time is up - GAME OVER!";
             liQuestion.setAttribute("style", "display:none;");
             answerResult.setAttribute("style", "display:none;");
-
+            scoreBoard.initials = prompt("Please enter your initials:");
+            console.log(scoreBoard.initials);
+            console.log(scoreBoard.score);
+            localStorage.setItem("scoreBoard", JSON.stringify(scoreBoard));
+            body.appendChild(scoreBoardDisplay);
+            scoreBoardDisplay.appendChild(displayInitials);
+            scoreBoardDisplay.appendChild(displayScore);
+            displayInitials.textContent = scoreBoard.initials;
+            displayScore.textContent = scoreBoard.score;
+           
         }
-
-
     }, 1000);
-
 }
 
 function displayQuestion() {
@@ -127,74 +119,87 @@ function displayQuestion() {
     var shuffledChoices = shuffleArray(choiceArray);
     // console.log(shuffledChoices);
     liQuestion.textContent = questionPool[questionIndex].question;
-    liChoice0.textContent = choiceArray[0];
-    liChoice1.textContent = choiceArray[1];
-    liChoice2.textContent = choiceArray[2];
-    liChoice3.textContent = choiceArray[3];
+    liChoice0.textContent = shuffledChoices[0];
+    liChoice1.textContent = shuffledChoices[1];
+    liChoice2.textContent = shuffledChoices[2];
+    liChoice3.textContent = shuffledChoices[3];
 
-        body.appendChild(liQuestion);
-        liQuestion.appendChild(listEl);
-        listEl.appendChild(choiceZeroDiv);
-        choiceZeroDiv.appendChild(liChoice0);
-        listEl.appendChild(choiceOneDiv);
-        choiceOneDiv.appendChild(liChoice1);
-        listEl.appendChild(choiceTwoDiv);
-        choiceTwoDiv.appendChild(liChoice2);
-        listEl.appendChild(choiceThreeDiv);
-        choiceThreeDiv.appendChild(liChoice3);
-        body.appendChild(answerResult);
-        
-    //     choiceZeroDiv.addEventListener("click", function answerQuestion(event) {
-    //     event.preventDefault();
-    //     var answerChoice = liChoice0.textContent;
-    //     console.log(answerChoice);
-    //     if (answerChoice == questionPool[questionIndex].answer) {
-    //         answerResult.textContent = "Correct!";
-    //         answerResult.setAttribute("style", "background-color:green; border-radius:25px;");
-    //     } else {
-    //         // answerResult.textContent = "Wrong!";
-    //         answerResult.setAttribute("style", "color:white; background-color:red; border-radius:25px;");
-    //         answerResult.textContent = "Wrong!";
-    //     }
-    //     displayQuestion();
-    // });
-    //     choiceOneDiv.addEventListener("click", function answerQuestion(event) {
-    //         event.preventDefault();
-    //         var answerChoice = liChoice1.textContent;
-    //         console.log(answerChoice);
-    //         if (answerChoice == questionPool[questionIndex].answer) {
-    //             answerResult.textContent = "Correct!";
-    //         } else {
-    //             answerResult.textContent = "Wrong!";
-    //         }
-    //         displayQuestion();
-    //     });
-    //     choiceTwoDiv.addEventListener("click", function answerQuestion(event) {
-    //             event.preventDefault();
-    //             var answerChoice = liChoice2.textContent;
-    //             console.log(answerChoice);
-    //             if (answerChoice == questionPool[questionIndex].answer) {
-    //                 answerResult.textContent = "Correct!";
-    //             } else {
-    //                 answerResult.textContent = "Wrong!";
-    //             }
-    //             displayQuestion();    
-    //         });
-    //     choiceThreeDiv.addEventListener("click", function answerQuestion(event) {
-    //              event.preventDefault();
-    //             var answerChoice = liChoice3.textContent;
-    //             console.log(answerChoice);
-    //             typeof answerChoice;
-    //             if (answerChoice == questionPool[questionIndex].answer) {
-    //                 answerResult.textContent = "Correct!";
-    //             } else {
-    //                 answerResult.textContent = "Wrong!";
-    //             }
-    //             displayQuestion();
-    //             });
-};
+    body.appendChild(liQuestion);
+    liQuestion.appendChild(listEl);
+    listEl.appendChild(choiceZeroDiv);
+    choiceZeroDiv.appendChild(liChoice0);
+    listEl.appendChild(choiceOneDiv);
+    choiceOneDiv.appendChild(liChoice1);
+    listEl.appendChild(choiceTwoDiv);
+    choiceTwoDiv.appendChild(liChoice2);
+    listEl.appendChild(choiceThreeDiv);
+    choiceThreeDiv.appendChild(liChoice3);
+    body.appendChild(answerResult);
+
+    liChoice0.addEventListener("click", function answerQuestion(event) {
+        event.preventDefault();
+        var answerChoice = liChoice1.textContent;
+        if (answerChoice == questionPool[questionIndex].answer) {
+            answerResult.setAttribute("style", "align-content:center; width:50px; color:white; background-color:green; text-align:center; border-radius:25px;");
+            answerResult.textContent = "Correct!";
+            scoreBoard.score += 1;
+        } else {
+            answerResult.setAttribute("style", "align-content:center; width:50px; color:white; background-color:red; text-align:center; border-radius:25px;");
+            answerResult.textContent = "Wrong!";
+            secondsLeft -= 15;
+        }
+        displayQuestion();
+    })
+
+    liChoice1.addEventListener("click", function answerQuestion(event) {
+        event.preventDefault();
+        var answerChoice = liChoice1.textContent;
+        console.log(answerChoice);
+        if (answerChoice == questionPool[questionIndex].answer) {
+            answerResult.setAttribute("style", "align-content:center; width:50px; color:white; background-color:green; text-align:center; border-radius:25px;");
+            answerResult.textContent = "Correct!";
+            scoreBoard.score += 1;
+        } else {
+            answerResult.setAttribute("style", "align-content:center; width:50px; color:white; background-color:red; text-align:center; border-radius:25px;");
+            answerResult.textContent = "Wrong!";
+            secondsLeft-=15;
+        }
+        displayQuestion();
+    });
+    liChoice2.addEventListener("click", function answerQuestion(event) {
+        event.preventDefault();
+        var answerChoice = liChoice2.textContent;
+        console.log(answerChoice);
+        if (answerChoice == questionPool[questionIndex].answer) {
+            answerResult.setAttribute("style", "color:white; background-color:green; border-radius:25px;");
+            answerResult.textContent = "Correct!";
+            scoreBoard.score += 1;
+        } else {
+            answerResult.setAttribute("style", "color:white; background-color:red; border-radius:25px;");
+            answerResult.textContent = "Wrong!";
+            secondsLeft-=15;
+        }
+        displayQuestion();
+    });
+    liChoice3.addEventListener("click", function answerQuestion(event) {
+        event.preventDefault();
+        var answerChoice = liChoice3.textContent;
+        console.log(answerChoice);
+        console.log(questionPool[questionIndex].answer);
+        if (answerChoice == questionPool[questionIndex].answer) {
+            answerResult.setAttribute("style", "color:white; text-align:center; background-color:green; border-radius:25px;");
+            answerResult.textContent = "Correct!";
+            scoreBoard.score += 1;
+        } else {
+            answerResult.setAttribute("style", "color:white; background-color:red; border-radius:25px;");
+            answerResult.textContent = "Wrong!";
+            secondsLeft-= 15;
+        }
+        displayQuestion();
+    });
+}
 
 function shuffleArray(arr) {
     arr.sort(() => Math.random() - 0.5);
     return arr;
-  }
+}
